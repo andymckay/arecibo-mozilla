@@ -7,23 +7,16 @@ def cmd(cmd):
 def log(msg):
     print msg
 
-def checkout_arecibo(path):
-    log('Checking out Arecibo')
-    cmd('cd %s; git pull' % path)
-
-def checkout_arecibo_mozilla(path):
-    log('Checking out Arecibo Mozilla')
-    cmd('cd %s; git pull' % path)
+def checkout(paths):
+    for path in paths:
+        log('Checking out: %s' % path)
+        cmd('cd %s; git pull' % path)
 
 def restart_apache():
     log('Restarting Apache')
     cmd('/etc/init.d/apache2 restart')
 
-arecibo_path = '/home/andy/arecibo'
-arecibo_mozilla_path = '%s/listener/normal/custom' % arecibo_path
-
-checkout_arecibo(arecibo_path)
-checkout_arecibo_mozilla(arecibo_mozilla_path)
-# todo: run migration
+checkout(['/home/andy/arecibo',
+          '/home/andy/arecibo-mozilla'])
 restart_apache()
 
