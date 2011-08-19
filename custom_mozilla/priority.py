@@ -7,7 +7,7 @@ def priority(instance, **kw):
     if instance.type in ['OperationalError', 'SMTPRecipientsRefused']:
         instance.priority = 7
         instance.save()
-   
+
     project_url = instance.group.project_url
     if project_url:
         stage = project_url.stage
@@ -17,8 +17,7 @@ def priority(instance, **kw):
         elif stage == 'testing':
             instance.priority += 2
 
-    instance.priority = max(instance.priority, 1)
-    instance.priority = min(instance.priority, 10)
+    instance.priority = min(max(instance.priority, 1), 10)
     instance.save()
 
 error_created.connect(priority, dispatch_uid='change_priority')
