@@ -5,6 +5,8 @@ try:
 except ImportError:
     from md5 import md5
 
+from django.db.models import F
+
 from error import signals
 from error.signals import error_created
 from error.listeners import default_grouping
@@ -26,6 +28,7 @@ def generate_key(instance):
 
     return hsh
 
+
 def default_grouping(instance, **kw):
     """ Given an error, see if we can fingerprint it and find similar ones """
     log("Firing signal: default_grouping")
@@ -36,7 +39,7 @@ def default_grouping(instance, **kw):
         try:
             created = False
             group = Group.objects.filter(uid=digest)[0]
-            group.count = Error.objects.filter(group=group).count() + 1
+            group.count = F('count')+getattr(instance, 'count', 1)
             group.save()
         except IndexError:
             created = True
